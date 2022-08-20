@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- Load the values that will be difrent on every system -->
+    <Import Project="$(MSBuildProjectDirectory)\config\uniqueValues.targets"/>
+    
+    <PropertyGroup>
+        <!-- Meta Data Generation Info -->
+        <ProjectGuid>{1BFAA09B-0110-416B-A9A1-8114193365B7}</ProjectGuid>
+        <ModNameHuman Condition=" '$(ModNameHuman)' == '' ">Eforen's Mod Template</ModNameHuman>
+        <ModNameMechine Condition=" '$(ModNameMechine)' == '' ">eforenmodtemplate</ModNameMechine>
+
+        <!-- Debugging Settings -->
+        <!-- Use Next line if you want to set a default for this project. Use uniqueValues.targets if you want to set this for you only. -->
+        <!-- <DebugTestWorldBase Condition=" '$(DebugTestWorldBase)' == '' ">ProjectTestWorldDefault</DebugTestWorldBase> -->
+        <!-- Use Next line if you want to set a default for this project. Use uniqueValues.targets if you want to set this for you only. -->
+        <!-- <DebugGameMode Condition=" '$(DebugGameMode)' == '' ">creative</DebugGameMode> -->
+        <!-- <ModsOutputDir.var Condition=" '$(ModsOutputDir.var)' == '' ">C:/Games/MyModBuilds</ModsOutputDir.var> -->
+        
+        <!-- Game Files Locations -->
+        <!-- Use Next line if you want to set a default for this project. Use uniqueValues.targets if you want to set this for you only. -->
+        <!-- <GameFilesPrefix Condition=" '$(GameFilesPrefix)' == '' ">C:\Games\VintageStory\Vintagestory_</GameFilesPrefix> -->
+        
+        <!-- Versioning Info -->
+        <VersionGame Condition=" '$(GameFilesPrefix)' == '' ">1.17.0rc5</VersionGame> <!-- This is used in several places including to generate the launch files -->
+        <VersionModMajor Condition=" '$(VersionModMajor)' == '' ">0</VersionModMajor>
+        <VersionModMinor Condition=" '$(VersionModMinor)' == '' ">0</VersionModMinor>
+        <VersionModPatch Condition=" '$(VersionModPatch)' == '' ">1</VersionModPatch>
+        
+        <!-- Compatibility Info -->
+        <VersionGameMinimum Condition=" '$(VersionGameMinimum)' == '' ">1.17.0-rc.1</VersionGameMinimum>
+        
+        <!-- Build Settings (You should not need to use these but they are here just incase.)-->
+        <!-- If you change these values from defaults make sure to update your .gitignore -->
+        <!-- <BuildBaseDir Condition=" '$(BuildBaseDir)' == '' ">bin</BuildBaseDir> -->
+        <!-- <BuildCacheDir Condition=" '$(BuildCacheDir)' == '' ">obj</BuildCacheDir> -->
+    </PropertyGroup>
+</Project>

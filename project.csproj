@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Defines tasks that are used later. -->
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildProjectDirectory)\config\settings.targets"/>
+  <!-- These values should not need to be changed. Check the config folder. -->
+  <!-- Readin Var Files
+  <PropertyGroup>
+    <BuildBaseDir>$([System.IO.File]::ReadAllText(BuildBaseDir.var))</BuildBaseDir>
+    <BuildCacheDir>$([System.IO.File]::ReadAllText(BuildCacheDir.var))</BuildCacheDir>
+    <DebugTestWorldBase>$([System.IO.File]::ReadAllText(DebugTestWorldBase.var))</DebugTestWorldBase>
+    <DebugGameMode>$([System.IO.File]::ReadAllText(DebugGameMode.var))</DebugGameMode>
+    <VersionModMajor>$([System.IO.File]::ReadAllText(VersionModMajor.var))</VersionModMajor>
+    <VersionModMinor>$([System.IO.File]::ReadAllText(VersionModMinor.var))</VersionModMinor>
+    <VersionModPatch>$([System.IO.File]::ReadAllText(VersionModPatch.var))</VersionModPatch>
+    <GameFilesPrefix>$([System.IO.File]::ReadAllText(GameFilesPrefix.var))</GameFilesPrefix>
+    <VersionGame>$([System.IO.File]::ReadAllText(VersionGame.var))</VersionGame>
+    <VersionGameMinimum>$([System.IO.File]::ReadAllText(VersionGameMinimum.var))</VersionGameMinimum>
+    <ModNameHuman>$([System.IO.File]::ReadAllText(ModNameHuman.var))</ModNameHuman>
+    <ModNameMechine>$([System.IO.File]::ReadAllText(ModNameMechine.var))</ModNameMechine>
+  </PropertyGroup> -->
+  <PropertyGroup>
+    <!-- These are the config defaults values -->
+    <BuildBaseDir Condition=" '$(BuildBaseDir)' == '' ">bin</BuildBaseDir>
+    <BuildCacheDir Condition=" '$(BuildCacheDir)' == '' ">obj</BuildCacheDir>
+    <DebugTestWorldBase Condition=" '$(DebugTestWorldBase)' == '' ">moddingtestworld</DebugTestWorldBase>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Use config\ModsOutputDir.var to set a location for where all your mods go to test them together -->
+    <ModsOutputDir Condition=" '$(ModsOutputDir)' == '' ">$(MSBuildProjectDirectory)\$(BuildBaseDir)\mods</ModsOutputDir> <!-- This is the default don't change it just use <ModsOutputDir> above -->
+    <TestWorld>$(DebugTestWorldBase)_$(VersionGame)</TestWorld>
+  </PropertyGroup>
+
+
+  <!-- Do not change values after this unless you really know what you are doing -->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>$(ModNameMechine)</RootNamespace>
+    <AssemblyName>$(ModNameMechine)</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(MSBuildProjectDirectory)\$(BuildBaseDir)\$(Configuration)\$(AssemblyName)\</OutputPath>
+    <IntermediateOutputPath>$(MSBuildProjectDirectory)\$(BuildCacheDir)\$(Configuration)\$(AssemblyName)\</IntermediateOutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(MSBuildProjectDirectory)\$(BuildBaseDir)\$(Configuration)\$(AssemblyName)\</OutputPath>
+    <IntermediateOutputPath>$(MSBuildProjectDirectory)\$(BuildCacheDir)\$(Configuration)\$(AssemblyName)\</IntermediateOutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="VintagestoryAPI">
+      <HintPath>$(GameFilesPrefix)$(VersionGame)\VintagestoryAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="VSSurvivalMod">
+      <HintPath>$(GameFilesPrefix)$(VersionGame)\Mods\VSSurvivalMod.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="VSEssentials">
+      <HintPath>$(GameFilesPrefix)$(VersionGame)\Mods\VSEssentials.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="VSCreativeMod">
+      <HintPath>$(GameFilesPrefix)$(VersionGame)\Mods\VSCreativeMod.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GameFilesPrefix)$(VersionGame)\Lib\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\**" CopyToOutputDirectory="Always"/>
+    <Content Include="modicon.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="modinfo.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <!-- Should Create AssemblyInfo.cs now-->
+  <ItemGroup>
+    <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\**" />
+  </ItemGroup>
+  <ItemGroup />
+
+
+  <!-- Import the actual build process for CSharp -->
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <!-- Should write modInfo.json now -->
+  <Target Name="ZipOutput" AfterTargets="Build">
+      <MakeDir
+            Directories="$(MSBuildProjectDirectory)\$(BuildBaseDir)\mods"/>
+      <ZipDirectory
+          SourceDirectory="$(OutputPath)"
+          DestinationFile="$(MSBuildProjectDirectory)\$(BuildBaseDir)\$(ModNameHuman)_v$(VersionModMajor).$(VersionModMinor).$(VersionModPatch)g$(VersionGameMinimum).$(Configuration).zip"
+          Overwrite="true" />
+      <Move Condition=" '$(Configuration)' == 'Debug' "
+        SourceFiles="$(MSBuildProjectDirectory)\$(BuildBaseDir)\$(ModNameHuman)_v$(VersionModMajor).$(VersionModMinor).$(VersionModPatch)g$(VersionGameMinimum).$(Configuration).zip" 
+        DestinationFiles="$(ModsOutputDir)\$(ModNameHuman)_v$(VersionModMajor).$(VersionModMinor).$(VersionModPatch)g$(VersionGameMinimum).$(Configuration).zip"/>
+  </Target>
+  <Target Name="WriteLaunchFile" AfterTargets="ZipOutput">
+        <WriteLinesToFile
+            File="$(MSBuildProjectDirectory)\.vscode\launch.json"
+            Lines='{
+	"version": "0.2.0",
+	"configurations": [{
+		"name": "Launch Client (.NET)",
+		"type": "clr",
+		"request": "launch",
+		"preLaunchTask": "Build (Debug)",
+        "envFile": "${workspaceFolder}/.env",
+		"program": "$([System.String]::Copy("$(GameFilesPrefix)").Replace("\","/"))$(VersionGame)/Vintagestory.exe",
+		"args": [
+			"--playStyle" , "preset-surviveandbuild",
+			"--openWorld" , "$(TestWorld)",
+			"--addModPath", "$([System.String]::Copy("$(ModsOutputDir)").Replace("\","/"))",
+		],
+		"console": "internalConsole",
+		"internalConsoleOptions": "openOnSessionStart",
+	},{
+		"name": "Launch Client (Mono)",
+		"type": "mono",
+		"request": "launch",
+		"preLaunchTask": "Build (Debug)",
+		"program": "$([System.String]::Copy("$(GameFilesPrefix)").Replace("\","/"))$(VersionGame)/Vintagestory.exe",
+		"args": [
+			"--playStyle" , "preset-surviveandbuild",
+			"--openWorld" , "$(TestWorld)",
+			"--addModPath", "$([System.String]::Copy("$(ModsOutputDir)").Replace("\","/"))",
+		],
+		"console": "internalConsole",
+		"internalConsoleOptions": "openOnSessionStart",
+	}]
+}'
+            Overwrite="true"/>
+    </Target>
+  <PropertyGroup>
+    <PostBuildEvent>echo Built $(Configuration) build of $(ModNameHuman)_v$(VersionModMajor).$(VersionModMinor).$(VersionModPatch)g$(VersionGame)</PostBuildEvent>
+  </PropertyGroup>
+</Project>
