@@ -10,14 +10,19 @@
         <ProjectGUID>1BFAA09B-0110-416B-A9A1-8114193365B7</ProjectGUID>
         <ModNameHuman Condition=" '$(ModNameHuman)' == '' ">Eforen's Mod Template</ModNameHuman>
         <ModNameMechine Condition=" '$(ModNameMechine)' == '' ">eforenmodtemplate</ModNameMechine>
-        <ModAuthors Condition=" '$(ModAuthors)' == '' ">Eforen</ModAuthors>
-        <!-- <ModAuthors Condition=" '$(ModAuthors)' == '' ">Author1|Author2</ModAuthors> -->
+        <!-- <ModAuthors Condition=" '$(ModAuthors)' == '' ">Eforen</ModAuthors> -->
+        <ModAuthors Condition=" '$(ModAuthors)' == '' ">Author1|Author2</ModAuthors>
         <ModDescription>Eforen's Mod Template</ModDescription>
-        <ModDependencies>
+        <ModDependencies>survival|onestick:1.0.1</ModDependencies>
+
+        <!-- DO NOT USE THIS FORMAT IT DOES NOT WORK YET JUST IS WHAT I WANT TO USE -->
+        <!-- <ModDependencies>
             <!-- Do not inclued game in the mod ModDependencies VersionGameMinimum is automatically used already for that -->
             <survival/> <!-- a dependency with no version requirement -->
             <onestick>1.0.1</onestick> <!-- a dependency with a version requirement -->
-        </ModDependencies>
+        </ModDependencies> -->
+
+
         <ModRequiredOnClient>true</ModRequiredOnClient>
         <!-- <ModRequiredOnClient>false</ModRequiredOnClient> -->
         <!-- <BuildAssemblyCompany>CompanyName</BuildAssemblyCompany> -->

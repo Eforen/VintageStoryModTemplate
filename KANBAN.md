@@ -2,10 +2,11 @@
 ## Completed 2022-08-20
 * Convert setting files to `.targets` files
 ## Completed 2022-08-21
-### Next Commit
 * Bring in all the requesit props needed for building AssemblyInfo and ModInfo File
+### Next Commit
 
 ## Doing
+* Mod Dependencies
 * Make build able to output AssemblyInfo.cs
 * Make build able to output ModInfo.json
 

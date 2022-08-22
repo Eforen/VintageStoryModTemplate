@@ -121,6 +121,18 @@
     <Compile Include="@(DynamicAssemblyInfo)" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <!-- <AuthorsOutput>$([System.String]::Join("\", \"", $([System.String]::Copy("$(ModAuthors)").Split("|")))</AuthorsOutput> -->
+    <AuthorsOutput>"$([System.String]::Join('", "', $([System.String]::Copy("$(ModAuthors)").Split("|"))))"</AuthorsOutput>
+    <!-- <AuthorsOutput>$([System.String]::Copy("$(ModAuthors)").Split("|"))</AuthorsOutput> -->
+
+    <!-- <DependancyKeysOnly>$([System.String]::Join('", "', $([System.String]::Copy("$(ModDependencies)").Split("|"))))</DependancyKeysOnly> -->
+    <!-- <DependancyKeysOnly>$(ModDependencies.GetType())</DependancyKeysOnly> -->
+    <DependancyKeysOnly>$(ModDependencies)</DependancyKeysOnly>
+    <ModRequiredOnClient Condition=" '$(ModRequiredOnClient.ToLower())' == 'true' ">true</ModRequiredOnClient>
+    <ModRequiredOnClient Condition=" '$(ModRequiredOnClient.ToLower())' != 'true' ">false</ModRequiredOnClient>
+  </PropertyGroup>
+
   <Target Name="BuildAssemblyInfo"
           DependsOnTargets="BuildMakeVersionNumber"
           BeforeTargets="BeforeBuild;BeforeRebuild">
@@ -163,9 +175,9 @@
   [assembly: AssemblyFileVersion("$(BuildAssemblyVersionNumber)")]
 
 
-  [assembly: ModDependency("game")]
-  [assembly: ModInfo("$(ModNameHuman)", "$(ModNameMechine)", Version = "1.0.1", Authors = new string[] { "Eforen" },
-          Website = "$(ModWebsite)", Description = "$(ModDescription)", RequiredOnClient = false)]'
+  [assembly: ModDependency("$(DependancyKeysOnly)")]
+  [assembly: ModInfo("$(ModNameHuman)", "$(ModNameMechine)", Version = "$(BuildModVersionNumber)", Authors = new string[] { $(AuthorsOutput) },
+          Website = "$(ModWebsite)", Description = "$(ModDescription)", RequiredOnClient = $(ModRequiredOnClient))]'
       Overwrite="true"/>
       <ItemGroup>
         <Compile Remove="$(MSBuildProjectDirectory)\src\AssemblyInfo.cs" />
