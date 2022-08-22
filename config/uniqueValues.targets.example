@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <!-- Load the values that will be difrent on every system -->
-    <Import Project="$(MSBuildProjectDirectory)\config\uniqueValues.targets"/>
     
     <PropertyGroup>
         <!-- Debugging Settings -->

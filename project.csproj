@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Defines tasks that are used later. -->
-  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  <!-- <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/> -->
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="$(MSBuildProjectDirectory)\config\settings.targets"/>
   <!-- These values should not need to be changed. Check the config folder. -->
@@ -24,6 +24,7 @@
     <!-- These are the config defaults values -->
     <BuildBaseDir Condition=" '$(BuildBaseDir)' == '' ">bin</BuildBaseDir>
     <BuildCacheDir Condition=" '$(BuildCacheDir)' == '' ">obj</BuildCacheDir>
+    <PropsCacheDir Condition=" '$(PropsCacheDir)' == '' ">Properties</PropsCacheDir>
     <DebugTestWorldBase Condition=" '$(DebugTestWorldBase)' == '' ">moddingtestworld</DebugTestWorldBase>
   </PropertyGroup>
   <PropertyGroup>
@@ -73,44 +74,147 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="VintagestoryAPI">
-      <HintPath>$(GameFilesPrefix)$(VersionGame)\VintagestoryAPI.dll</HintPath>
+      <HintPath>C:\Games\VintageStory\Vintagestory_1.17.0rc5\VintagestoryAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VSSurvivalMod">
-      <HintPath>$(GameFilesPrefix)$(VersionGame)\Mods\VSSurvivalMod.dll</HintPath>
+      <HintPath>C:\Games\VintageStory\Vintagestory_1.17.0rc5\Mods\VSSurvivalMod.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VSEssentials">
-      <HintPath>$(GameFilesPrefix)$(VersionGame)\Mods\VSEssentials.dll</HintPath>
+      <HintPath>C:\Games\VintageStory\Vintagestory_1.17.0rc5\Mods\VSEssentials.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VSCreativeMod">
-      <HintPath>$(GameFilesPrefix)$(VersionGame)\Mods\VSCreativeMod.dll</HintPath>
+      <HintPath>C:\Games\VintageStory\Vintagestory_1.17.0rc5\Mods\VSCreativeMod.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>$(GameFilesPrefix)$(VersionGame)\Lib\Newtonsoft.Json.dll</HintPath>
+      <HintPath>C:\Games\VintageStory\Vintagestory_1.17.0rc5\Lib\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup> 
   <ItemGroup>
     <None Include="assets\**" CopyToOutputDirectory="Always"/>
-    <Content Include="modicon.png" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="modinfo.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="config\modicon.png" CopyToOutputDirectory="PreserveNewest" />
+    <!-- <Content Include="modinfo.json" CopyToOutputDirectory="PreserveNewest" /> -->
   </ItemGroup>
   <!-- Should Create AssemblyInfo.cs now-->
+
+    <!-- Sets Version Number property. -->
+  <Target Name="BuildMakeVersionNumber">
+    <message text="C:\Games\VintageStory\Vintagestory_1.17.0rc5"/>
+    <CreateProperty Value="$(VersionModMajor).$(VersionModMinor).$(VersionModPatch).0"> <!-- TODO: Change this to use an auto incrementing value for the revision number-->
+      <Output PropertyName="BuildAssemblyVersionNumber" TaskParameter="Value" />
+    </CreateProperty>
+    <CreateProperty Value="$(VersionModMajor).$(VersionModMinor).$(VersionModPatch)"> <!-- TODO: Change this to use an auto incrementing value for the revision number-->
+      <Output PropertyName="BuildModVersionNumber" TaskParameter="Value" />
+    </CreateProperty>
+  </Target>
+
+  <!-- Claim we want to use the AssemblyInfo.cs file when building. -->
   <ItemGroup>
-    <Compile Include="src\AssemblyInfo.cs" />
+    <DynamicAssemblyInfo Include="src\AssemblyInfo.cs" />
+    <Compile Include="@(DynamicAssemblyInfo)" />
+  </ItemGroup>
+
+  <Target Name="BuildAssemblyInfo"
+          DependsOnTargets="BuildMakeVersionNumber"
+          BeforeTargets="BeforeBuild;BeforeRebuild">
+      <Message Importance="high" Text="Making AssemblyInfo"/>
+    <MakeDir Directories="$(MSBuildProjectDirectory)\$(PropsCacheDir)" />
+    <WriteLinesToFile File="@(DynamicAssemblyInfo)"
+      Lines='using System.Reflection%3B
+  using System.Runtime.CompilerServices%3B
+  using System.Runtime.InteropServices%3B
+  using Vintagestory.API.Common%3B
+
+  // General Information about an assembly is controlled through the following 
+  // set of attributes. Change these attribute values to modify the information
+  // associated with an assembly.
+  [assembly: AssemblyTitle("$(ModNameHuman)")]
+  [assembly: AssemblyDescription("$(ModDescription)")]
+  [assembly: AssemblyConfiguration("$(Configuration)")]
+  [assembly: AssemblyCompany("$(BuildAssemblyCompany)")]
+  [assembly: AssemblyProduct("$(ModNameMechine)")]
+  [assembly: AssemblyCopyright("$(BuildAssemblyCopyright)")]
+  [assembly: AssemblyTrademark("")]
+  [assembly: AssemblyCulture("")]
+
+  // Setting ComVisible to false makes the types in this assembly not visible 
+  // to COM components.  If you need to access a type in this assembly from 
+  // COM, set the ComVisible attribute to true on that type.
+  [assembly: ComVisible(false)]
+
+  // The following GUID is for the ID of the typelib if this project is exposed to COM
+  [assembly: Guid("$(ProjectGUID)")]
+
+  // Version information for an assembly consists of the following four values:
+  //
+  //      Major Version
+  //      Minor Version 
+  //      Build Number
+  //      Revision
+  //
+  [assembly: AssemblyVersion("$(BuildAssemblyVersionNumber)")]
+  [assembly: AssemblyFileVersion("$(BuildAssemblyVersionNumber)")]
+
+
+  [assembly: ModDependency("game")]
+  [assembly: ModInfo("$(ModNameHuman)", "$(ModNameMechine)", Version = "1.0.1", Authors = new string[] { "Eforen" },
+          Website = "$(ModWebsite)", Description = "$(ModDescription)", RequiredOnClient = false)]'
+      Overwrite="true"/>
+      <ItemGroup>
+        <Compile Remove="$(MSBuildProjectDirectory)\src\AssemblyInfo.cs" />
+      </ItemGroup>
+      <ItemGroup>
+        <Compile Include="$(MSBuildProjectDirectory)\src\AssemblyInfo.cs" />
+      </ItemGroup>
+  </Target>
+
+  <!-- Deletes the AssemblyInfo.cs file. -->
+  <Target Name="DeleteAssemblyInfo" BeforeTargets="Clean">
+    <Delete Files="$(MSBuildProjectDirectory)\$(PropsCacheDir)\AssemblyInfo.cs" />
+  </Target>
+<!-- 
+  <! - - Target that actually creates the AssemblyInfo.cs file. - - >
+  <Target Name="BuildAssemblyInfo"
+          DependsOnTargets="BuildMakeVersionNumber" >
+    <MakeDir Directories="$(PropsCacheDir)" />
+    <AssemblyInfo OutputFile="@(DynamicAssemblyInfo)"
+                  CodeLanguage="CS"
+                  AssemblyCompany="$(BuildAssemblyCompany)"
+                  AssemblyConfiguration="$(Configuration)"
+                  AssemblyCopyright="$(BuildAssemblyCopyright)"
+                  AssemblyFileVersion="$(BuildAssemblyVersionNumber)"
+                  AssemblyInformationalVersion="$(BuildAssemblyVersionNumber)"
+                  AssemblyTitle="$(ModAuthors)"
+                  AssemblyVersion="$(BuildAssemblyVersionNumber)"
+                  ModDependency="game"
+                  />
+  </Target> -->
+
+
+  <ItemGroup>
+    <!-- <Compile Include="src\AssemblyInfo.cs" /> -->
     <Compile Include="src\**" />
   </ItemGroup>
-  <ItemGroup />
 
+  <!-- Inserts AssemblyInfo.cs file generation into the build pipeline. -->
+  <!-- <PropertyGroup>
+    <BuildDependsOn>BuildMakeVersionNumber;BuildAssemblyInfo;$(BuildDependsOn)</BuildDependsOn>
+    <CleanDependsOn>DeleteAssemblyInfo;$(CleanDependsOn)</CleanDependsOn>
+  </PropertyGroup> -->
 
   <!-- Import the actual build process for CSharp -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 
   <!-- Should write modInfo.json now -->
   <Target Name="ZipOutput" AfterTargets="Build">
+      <Message Importance="high" Text="Making Zip"/>
       <MakeDir
             Directories="$(MSBuildProjectDirectory)\$(BuildBaseDir)\mods"/>
       <ZipDirectory
