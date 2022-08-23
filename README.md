@@ -23,3 +23,11 @@ moveZip-->gtargetZipContinue[Continue]
 end
 gtargetZip -->|2|targetwriteLaunchFile[Run Target WriteLaunchFile]
 ```
+
+
+### Thanks to
+Discord
+* Fulgen
+  * Help with `ModDependency` Attribute format/usage
+* https://github.com/Copygirl/howto-example-mod
+  * Showing me the correct way to get vscode to launch the game in debug mode

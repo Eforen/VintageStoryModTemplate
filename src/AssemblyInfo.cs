@@ -21,7 +21,7 @@ using System.Reflection;
   [assembly: ComVisible(false)]
 
   // The following GUID is for the ID of the typelib if this project is exposed to COM
-  [assembly: Guid("1BFAA09B-0110-416B-A9A1-8114193365B7")]
+  [assembly: Guid("00000000-0000-0000-0000-000000000000")]
 
   // Version information for an assembly consists of the following four values:
   //
@@ -34,6 +34,6 @@ using System.Reflection;
   [assembly: AssemblyFileVersion("0.0.1.0")]
 
 
-  [assembly: ModDependency("<!----><survival xmlns="http://schemas.microsoft.com/developer/msbuild/2003" /><!----><onestick xmlns="http://schemas.microsoft.com/developer/msbuild/2003">1.0.1</onestick><!---->")]
+  [assembly: ModDependency("game","1.17.0rc5"), ModDependency("survival"), ModDependency("onestick", "1.0.1")]
   [assembly: ModInfo("Eforen's Mod Template", "eforenmodtemplate", Version = "0.0.1", Authors = new string[] { "Author1", "Author2" },
           Website = "https://github.com/Eforen/VintageStoryModTemplate", Description = "Eforen's Mod Template", RequiredOnClient = true)]

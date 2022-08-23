@@ -118,7 +118,7 @@
   <!-- Claim we want to use the AssemblyInfo.cs file when building. -->
   <ItemGroup>
     <DynamicAssemblyInfo Include="src\AssemblyInfo.cs" />
-    <Compile Include="@(DynamicAssemblyInfo)" />
+    <!-- <Compile Include="@(DynamicAssemblyInfo)" /> -->
   </ItemGroup>
 
   <PropertyGroup>
@@ -128,15 +128,96 @@
 
     <!-- <DependancyKeysOnly>$([System.String]::Join('", "', $([System.String]::Copy("$(ModDependencies)").Split("|"))))</DependancyKeysOnly> -->
     <!-- <DependancyKeysOnly>$(ModDependencies.GetType())</DependancyKeysOnly> -->
-    <DependancyKeysOnly>$(ModDependencies)</DependancyKeysOnly>
+    <!-- <DependancyKeysOnly>"$([System.String]::Join('", "', $([System.String]::Copy("$(ModDependenciesNameOnly)").Split("|"))))"</DependancyKeysOnly> -->
+    <!-- <DependenciesWithVersions>$(
+      [System.String]::Join('", "', 
+        $([System.String]::Copy("$(ModModDependenciesWithVersions)").Split("|").Aggregate(
+          (acc, next)=>acc+(next.Split("|"))[0]
+        ))
+      )
+    )</DependenciesWithVersions> -->
+    <!-- <DependenciesWithVersions>$(
+      [System.String]::Join('", "', 
+        $([System.String]::Copy("$(ModModDependenciesWithVersions)").Split("|").Select(x=>x.Split(":")[0]))
+      )
+    )</DependenciesWithVersions> -->
+    <!-- <ModDependencies>$([System.Text.RegularExpressions.Regex]::Matches($(ModDependenciesWithVersions), '(\w+)(?:\|(\w+))?(?::(\S+))?') | % { "$($_.Groups[1].Value)": "$($_.Groups[2].Value)", "version": "$($_.Groups[3].Value)" })</ModDependencies> -->
+    <!-- <DependenciesWithVersions>$([System.Text.Json.JsonSerializer]::Serialize(ModDependencies))</DependenciesWithVersions> -->
+    <!-- <DependenciesWithVersions>$(ModDependencies)</DependenciesWithVersions> -->
+    <!-- <DependenciesWithVersions>$(
+      ModDependencies
+    )</DependenciesWithVersions> -->
+    <ModDependencies><root>$(ModDependencies)</root></ModDependencies>
     <ModRequiredOnClient Condition=" '$(ModRequiredOnClient.ToLower())' == 'true' ">true</ModRequiredOnClient>
     <ModRequiredOnClient Condition=" '$(ModRequiredOnClient.ToLower())' != 'true' ">false</ModRequiredOnClient>
   </PropertyGroup>
 
+  <UsingTask TaskName="XmlToJson" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <XML ParameterType="System.String" Required="true" />
+      <GameVersion ParameterType="System.String" Required="true" />
+      <AssemblyFile ParameterType="System.Boolean" />
+      <ResultOutput ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <!-- <Reference Include="System.Xml"/> -->
+      <Using Namespace="System"/>
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.Xml"/>
+      <Code Type="Fragment" Language="cs"><![CDATA[
+XmlDocument doc = new XmlDocument();
+doc.LoadXml(XML);
+var root = doc.DocumentElement;
+
+var result = new Dictionary<string, string>();
+
+foreach (XmlNode node in root.ChildNodes)
+{
+    if(node.Name == "#comment") continue;
+    
+    Console.WriteLine("Key |"+node.Name+"|");
+    //result[node.Name] = node.InnerText;
+    result.Add(node.Name, node.InnerText);
+}
+
+if(AssemblyFile){
+  ResultOutput=$"ModDependency(\"game\",\""+GameVersion+"\")";
+  foreach(var kvp in result)
+  {
+    if(kvp.Value.Trim() != "") ResultOutput+=$", ModDependency(\"{kvp.Key}\", \"{kvp.Value}\")";
+    else ResultOutput+=$", ModDependency(\"{kvp.Key}\")";
+  }
+} else{
+  ResultOutput="{ \"game\": \""+GameVersion+"\"";
+  foreach(var kvp in result)
+  {
+      ResultOutput+=$", \"{kvp.Key}\": \"{kvp.Value}\"";
+  }
+  ResultOutput+=" }";
+}
+
+Console.WriteLine(ResultOutput);
+//return ResultOutput;
+]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="BuildDependancies"
+          BeforeTargets="BeforeBuild;BeforeRebuild">
+    <XmlToJson XML="$(ModDependencies)" GameVersion="$(VersionGame)">
+      <Output PropertyName="DependenciesWithVersions" TaskParameter="ResultOutput" />
+    </XmlToJson>
+    <XmlToJson XML="$(ModDependencies)" GameVersion="$(VersionGame)" AssemblyFile="true">
+      <Output PropertyName="DependancyAssembly" TaskParameter="ResultOutput" />
+    </XmlToJson>
+    <!-- <Message Text="XML is $(ModDependencies)" Importance="High" /> -->
+    <!-- <Message Text="Result is $(DependenciesWithVersions)" Importance="High" /> -->
+  </Target>
+
   <Target Name="BuildAssemblyInfo"
           DependsOnTargets="BuildMakeVersionNumber"
           BeforeTargets="BeforeBuild;BeforeRebuild">
-      <Message Importance="high" Text="Making AssemblyInfo"/>
+    <Message Importance="high" Text="Making AssemblyInfo"/>
     <MakeDir Directories="$(MSBuildProjectDirectory)\$(PropsCacheDir)" />
     <WriteLinesToFile File="@(DynamicAssemblyInfo)"
       Lines='using System.Reflection%3B
@@ -175,16 +256,16 @@
   [assembly: AssemblyFileVersion("$(BuildAssemblyVersionNumber)")]
 
 
-  [assembly: ModDependency("$(DependancyKeysOnly)")]
+  [assembly: $(DependancyAssembly)]
   [assembly: ModInfo("$(ModNameHuman)", "$(ModNameMechine)", Version = "$(BuildModVersionNumber)", Authors = new string[] { $(AuthorsOutput) },
           Website = "$(ModWebsite)", Description = "$(ModDescription)", RequiredOnClient = $(ModRequiredOnClient))]'
       Overwrite="true"/>
       <ItemGroup>
         <Compile Remove="$(MSBuildProjectDirectory)\src\AssemblyInfo.cs" />
       </ItemGroup>
-      <ItemGroup>
+      <!-- <ItemGroup>
         <Compile Include="$(MSBuildProjectDirectory)\src\AssemblyInfo.cs" />
-      </ItemGroup>
+      </ItemGroup> -->
   </Target>
 
   <!-- Deletes the AssemblyInfo.cs file. -->
@@ -225,7 +306,22 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 
   <!-- Should write modInfo.json now -->
-  <Target Name="ZipOutput" AfterTargets="Build">
+  <Target Name="WriteModInfo" AfterTargets="AfterBuild">
+    <WriteLinesToFile
+        File="$(OutputPath)\modinfo.json"
+        Lines='{
+  "type": "#(ModType)",
+  "modid": "$(ModNameMechine)",
+  "name": "$(ModNameHuman)",
+  "authors": [ $(AuthorsOutput) ],
+  "description": "$(ModDescription)",
+  "version": "$(BuildModVersionNumber)",
+  "dependencies": $(DependenciesWithVersions)
+}
+'
+        Overwrite="true"/>
+  </Target>
+  <Target Name="ZipOutput" AfterTargets="WriteModInfo">
       <Message Importance="high" Text="Making Zip"/>
       <MakeDir
             Directories="$(MSBuildProjectDirectory)\$(BuildBaseDir)\mods"/>

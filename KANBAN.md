@@ -3,12 +3,13 @@
 * Convert setting files to `.targets` files
 ## Completed 2022-08-21
 * Bring in all the requesit props needed for building AssemblyInfo and ModInfo File
+## Completed 2022-08-23
 ### Next Commit
-
-## Doing
 * Mod Dependencies
 * Make build able to output AssemblyInfo.cs
 * Make build able to output ModInfo.json
+
+## Doing
 
 ## Backlog
 * Fix warning CS2002: Source file '\VintageStoryModTemplate\src\AssemblyInfo.cs' specified multiple times
