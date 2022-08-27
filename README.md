@@ -64,6 +64,8 @@ To make things easier for developers I have included an example of this file at 
 
 ### Specifying Game Files Location/s
 
+The pipeline builds a launch settings file `/.vscode/launch.json` and also uses the DLL files in the game files folders to build the mod source. Because of this its important to know how to tell the pipeline where to find the files on your system, on you CI/CD system, or anywhere else you run the pipeline.
+
 I have added 2 ways of specifying the location of the game files on your system Static and Dynamic. Personally I use the dynamic method and highly recommend that, but I understand some people may not or may want to use the `VintageStory` env var.
 
 #### Setting up Static Game Files Path
@@ -85,6 +87,32 @@ This line will use the system environment variable `VINTAGE_STORY` as the locati
 ```
 
 #### Setting up Dynamic Game Files Paths
+This system will combine the `GameFilesPrefix` and `VersionGame` settings to create the location of the game files.
+
+An example file structure might look like you having a folder on your C drive named `C:\Games\VintageStory\` and inside there you have all the diffrent version of the game files.
+
+Note that on a unix/linux/mac system this may look like something else for example `/var/game/vs/`.
+
+Now lets say inside that folder you have 2 versions one is 1.16.5 and the other is 1.17.0rc7
+
+```
+C:\Games\VintageStory\vs_1.16.5\VintageStory.exe
+C:\Games\VintageStory\vs_1.17.0rc7\VintageStory.exe
+```
+
+You would set the `GameFilesPrefix` in your `/config/uniqueValues.targets` file as something like this:
+```XML
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <!-- ... -->
+        <GameFilesPrefix>C:\Games\VintageStory\vs_</GameFilesPrefix>
+        <!-- ... -->
+    </PropertyGroup>
+</Project>
+```
+
+Note that we only have part of the path here the other half of the path comes from the `VersionGame` property this should likely be set in `/config/settings.targets`
 
 # Thanks to
 Discord

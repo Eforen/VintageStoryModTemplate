@@ -11,15 +11,16 @@
 
 ## Completed 2022-08-27
 * Make an override that turns off the path versioning
-### Next Commit
 * Explain the `<GameFilesStaticLocation>` tag in the [README File](README.md)
+### Next Commit
+* Explain the `<GameFilesPrefix>` tag in the [README File](README.md)
 
 ## Doing
 * Create [README file](README.md) Manual
 * Explain all the variables in the [README file](README.md) file
+* Explain the `<VersionGame>` tag in the [README File](README.md)
 
 ## Backlog
-* Explain the `<GameFilesPrefix>` tag in the [README File](README.md)
 * Explain the `<ModType>` tag in the [README File](README.md)
 * Explain the `<ProjectGUID>` tag in the [README File](README.md)
 * Explain the `<ModNameHuman>` tag in the [README File](README.md)
@@ -34,7 +35,6 @@
 * Explain the `<DebugTestWorldBase>` tag in the [README File](README.md)
 * Explain the `<DebugGameMode>` tag in the [README File](README.md)
 * Explain the `<ModsOutputDir>` tag in the [README File](README.md)
-* Explain the `<VersionGame>` tag in the [README File](README.md)
 * Explain the `<VersionModMajor>` tag in the [README File](README.md)
 * Explain the `<VersionModMinor>` tag in the [README File](README.md)
 * Explain the `<VersionModPatch>` tag in the [README File](README.md)
