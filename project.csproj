@@ -333,6 +333,12 @@ Console.WriteLine(ResultOutput);
         SourceFiles="$(MSBuildProjectDirectory)\$(BuildBaseDir)\$(ModNameHuman)_v$(VersionModMajor).$(VersionModMinor).$(VersionModPatch)g$(VersionGameMinimum).$(Configuration).zip" 
         DestinationFiles="$(ModsOutputDir)\$(ModNameHuman)_v$(VersionModMajor).$(VersionModMinor).$(VersionModPatch)g$(VersionGameMinimum).$(Configuration).zip"/>
   </Target>
+  <PropertyGroup>
+    <GameFiles>$([System.String]::Copy("$(GameFilesPrefix)").Replace("\","/"))$(VersionGame)</GameFiles>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GameFiles Condition=" '$(GameFilesStaticLocation)' != '' and '$(GameFilesStaticLocation)' != 'prefix'">$([System.String]::Copy("$(GameFilesStaticLocation)").Replace("\","/"))</GameFiles>
+  </PropertyGroup>
   <Target Name="WriteLaunchFile" AfterTargets="ZipOutput">
         <WriteLinesToFile
             File="$(MSBuildProjectDirectory)\.vscode\launch.json"
@@ -344,7 +350,7 @@ Console.WriteLine(ResultOutput);
 		"request": "launch",
 		"preLaunchTask": "Build (Debug)",
         "envFile": "${workspaceFolder}/.env",
-		"program": "$([System.String]::Copy("$(GameFilesPrefix)").Replace("\","/"))$(VersionGame)/Vintagestory.exe",
+		"program": "$(GameFiles)/Vintagestory.exe",
 		"args": [
 			"--playStyle" , "preset-surviveandbuild",
 			"--openWorld" , "$(TestWorld)",
@@ -357,7 +363,7 @@ Console.WriteLine(ResultOutput);
 		"type": "mono",
 		"request": "launch",
 		"preLaunchTask": "Build (Debug)",
-		"program": "$([System.String]::Copy("$(GameFilesPrefix)").Replace("\","/"))$(VersionGame)/Vintagestory.exe",
+		"program": "$(GameFiles)/Vintagestory.exe",
 		"args": [
 			"--playStyle" , "preset-surviveandbuild",
 			"--openWorld" , "$(TestWorld)",

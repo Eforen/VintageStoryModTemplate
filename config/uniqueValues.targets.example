@@ -11,6 +11,8 @@
         <!-- <DebugGameMode Condition=" '$(DebugGameMode)' == '' ">creative</DebugGameMode> -->
         <!-- Game Files Locations -->
         <GameFilesPrefix Condition=" '$(GameFilesPrefix)' == '' ">C:\Games\VintageStory\Vintagestory_</GameFilesPrefix>
+        <!-- Use of the following line will disable the game files prefixing system -->
+        <!-- <GameFilesStaticLocation>C:\Games\VintageStory\Vintagestory</GameFilesStaticLocation> -->
 
         <!-- Use this line to set a location for where all your mods go. 
             For example you could have all your mods dump into the same folder to test them together, 
