@@ -95,6 +95,7 @@
     </Reference>
   </ItemGroup>
   <PropertyGroup>
+    <!-- This is not used by this pipeline to determine if it should make a AssemblyInfo file the pipeline does this another way -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup> 
   <ItemGroup>

@@ -19,6 +19,41 @@ Simple Mod Template I use for my mods
         - [Example Using a static path to your VintageStory Game files](#example-using-a-static-path-to-your-vintagestory-game-files)
         - [Example using an environment variable](#example-using-an-environment-variable)
       - [Setting up Dynamic Game Files Paths](#setting-up-dynamic-game-files-paths)
+    - [Mod MetaData](#mod-metadata)
+      - [Mod Type](#mod-type)
+        - [Theme Packs](#theme-packs)
+        - [Content Mods](#content-mods)
+        - [Code Mods](#code-mods)
+      - [Mod Versioning](#mod-versioning)
+      - [Mod Authorship](#mod-authorship)
+        - [Single Attribution](#single-attribution)
+        - [Multi-Attribution](#multi-attribution)
+      - [Mod Website](#mod-website)
+      - [Mod Description](#mod-description)
+      - [Mod Dependencies](#mod-dependencies)
+    - [ModInfo.json and AssemblyInfo.cs config](#modinfojson-and-assemblyinfocs-config)
+      - [AssemblyInfo.cs](#assemblyinfocs)
+        - [AssemblyTitle](#assemblytitle)
+        - [AssemblyDescription](#assemblydescription)
+        - [AssemblyConfiguration](#assemblyconfiguration)
+        - [AssemblyCompany](#assemblycompany)
+        - [AssemblyProduct](#assemblyproduct)
+        - [AssemblyCopyright](#assemblycopyright)
+        - [Guid](#guid)
+        - [AssemblyVersion](#assemblyversion)
+        - [AssemblyFileVersion](#assemblyfileversion)
+        - [ModDependency](#moddependency)
+        - [ModInfo](#modinfo)
+          - [Human Name](#human-name)
+          - [Mechine Name](#mechine-name)
+          - [Version](#version)
+          - [Authors](#authors)
+          - [Website](#website)
+          - [Description](#description)
+        - [Not Currently Supported](#not-currently-supported)
+          - [AssemblyTrademark](#assemblytrademark)
+          - [AssemblyCulture](#assemblyculture)
+          - [ComVisible](#comvisible)
 - [Thanks to](#thanks-to)
 
 ## Build Pipeline
@@ -114,6 +149,149 @@ You would set the `GameFilesPrefix` in your `/config/uniqueValues.targets` file 
 
 Note that we only have part of the path here the other half of the path comes from the `VersionGame` property this should likely be set in `/config/settings.targets`
 
+### Mod MetaData
+#### Mod Type
+
+Currently the pipeline does not really actually do anything with this value other than dump it into the modinfo.json file in the correct spot.
+
+The Accepted values are as follows:
+
+##### Theme Packs
+```xml
+<ModType>theme</ModType>
+```
+Theme pack mods only add png files also known as textures and sound files. They can change the look of blocks, items, and even entities. What they can't do is add new stuff to the game. Theme packs also can't change the shapes of blocks and creatures since that would involve editing json files.
+
+##### Content Mods
+```xml
+<ModType>content</ModType>
+```
+Content mods, in addition to everything theme packs can do, can also add and edit json files to the game. This gives content mods the power to add new blocks, items, recipes, and much more. What limits them is adding new behaviors and mechanics to Vintage Story. So while content mods can add squirrels, for example, they can't do something unique to them such as randomly spawn in oak trees.
+
+##### Code Mods
+```xml
+<ModType>code</ModType>
+```
+Code mods don't have any limits. They can do anything but are a much higher learning curve requiring knowledge of C# coding and the game API.
+
+See the [vintage story wiki](https://wiki.vintagestory.at/index.php/Modding:Mod_Types) for more information.
+#### Mod Versioning
+There are 3 different components of a mod version.
+* Major
+* Minor
+* Patch
+These compnents should be set in `/config/settings.targets` and are the tags `<VersionModMajor>`, `<VersionModMinor>`, and `<VersionModPatch>` respectively.
+
+The ModDB does accept one more version element that I have not implemented yet. This element goes on the end and is the Release candidate and some other similar tags that can be tacked on the end.
+
+#### Mod Authorship
+This pipeline supports 2 methods of attribution of the mod authors/contributors.
+
+Both just use the tag `<ModAuthors>`.
+
+As this setting is something that should be global I recommend you place it in the `/config/settings.targets` file.
+
+##### Single Attribution
+You can make the pipeline write the metadata files with a single author.
+
+To do this simply put only a single author in the pipeline settings `<ModAuthors>` tag.
+
+You can put just about anything in this tag such as `<ModAuthors>Super Awesome Group</ModAuthors>` how ever note that you may not include the character `|` this character will make it be treated as a Multi-Attribution tag.
+
+##### Multi-Attribution
+You can make the pipeline write the metadata files with an array of authors in any order you want.
+
+To do this simply write your tag value of the authors split by `|` with no leading or trailing space.
+
+Some Examples:
+
+Some group name and 2 authors
+```xml
+<ModAuthors>Super Awesome Group|Author 1|Author2</ModAuthors>
+```
+
+2 authors
+```xml
+<ModAuthors>Author 1|Author2</ModAuthors>
+```
+
+2 authors and patreons
+```xml
+<ModAuthors>Author 1|Author2|My Patreons</ModAuthors>
+```
+
+One author and a Discord Channel
+```xml
+<ModAuthors>Author 1|The Discord Channel</ModAuthors>
+```
+
+#### Mod Website
+
+This should likely be a link to your git repository.
+
+Additionally, this should be set in `/config/settings.targets`.
+
+Example: 
+```xml
+<ModWebsite>https://github.com/eforen/VintageStoryModTemplate</ModWebsite>
+```
+
+#### Mod Description
+It is what it says on the tin. 
+This should be set in `/config/settings.targets`.
+
+Example: 
+```xml
+<ModDescription>Super Awesome mod that does something super awesome to the game!</ModDescription>
+```
+
+#### Mod Dependencies
+
+
+
+### ModInfo.json and AssemblyInfo.cs config
+Both the ModInfo.json and AssemblyInfo.cs config files are automatically generated by the pipeline based on the config.
+
+By default, the `modinfo.json` file will be built as an artifact in the folder `\bin\Debug\$(ModNameMechine)\` or `\bin\Release\$(ModNameMechine)\` depending on what mode your building in.
+
+#### AssemblyInfo.cs
+##### AssemblyTitle
+##### AssemblyDescription
+##### AssemblyConfiguration
+##### AssemblyCompany
+##### AssemblyProduct
+##### AssemblyCopyright
+##### Guid
+The `ProjectGUID` should be set in `/config/settings.targets` this should be unique to the project but only set once for the project. If you need one searching [guid](https://duckduckgo.com/?q=guid&ia=answer) on duckduckgo or most other search engines and it will make one at the top just copy that guid into the setting.
+##### AssemblyVersion
+See: [Mod Versioning](#mod-versioning)
+
+##### AssemblyFileVersion
+##### ModDependency
+##### ModInfo
+###### Human Name
+`ModNameHuman` is used as the display name
+###### Mechine Name
+`ModNameMechine` is used by the system for paths, ids, and filenames etc
+###### Version
+See: [Mod Versioning](#mod-versioning)
+###### Authors
+See: [Mod Authorship](#mod-authorship)
+###### Website
+See: [Mod Website](#mod-website)
+###### Description
+See: [Mod Description](#mod-description)
+
+##### Not Currently Supported
+Not currently Supported elements if you want support for any of these then DIY or submit an issue request in the [github repo](https://github.com/eforen/VintageStoryModTemplate/issues)
+
+Or submit a pull request
+###### AssemblyTrademark
+Default: `[assembly: AssemblyTrademark("")]`
+###### AssemblyCulture
+Default: `[assembly: AssemblyCulture("")]`
+###### ComVisible
+Default: `[assembly: ComVisible(false)]`
 # Thanks to
 Discord
 * Fulgen
