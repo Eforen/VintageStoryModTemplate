@@ -28,6 +28,7 @@ Simple Mod Template I use for my mods
       - [Mod Authorship](#mod-authorship)
         - [Single Attribution](#single-attribution)
         - [Multi-Attribution](#multi-attribution)
+      - [Mod Game Version Compatibility](#mod-game-version-compatibility)
       - [Mod Website](#mod-website)
       - [Mod Description](#mod-description)
       - [Mod Dependencies](#mod-dependencies)
@@ -223,6 +224,31 @@ Some group name and 2 authors
 One author and a Discord Channel
 ```xml
 <ModAuthors>Author 1|The Discord Channel</ModAuthors>
+```
+
+#### Mod Game Version Compatibility
+Another important tag is the game version compatibility tag. This should be what ever the lowest compatible version of the base game is.
+
+For example the current version may be 1.16.5 but your mod is compatable with anything above 1.16.2.
+
+In this case you would set in `/config/settings.targets`
+the tag value `<VersionGameMinimum>1.16.2</VersionGameMinimum>`
+
+and to tell the pipeline that you want to test in the current version `1.16.5` (assuming you have set things up correctly for it) you would add the tag `<VersionGame>1.16.5</Version>`.
+
+For more info on the dynamic debug system see [Setting up Dynamic Game Files Paths](#setting-up-dynamic-game-files-paths)
+
+At any rate assuming the above your `settings.targets` file will look something like this:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <!-- ... -->
+        <VersionGameMinimum>1.16.2</VersionGameMinimum>
+        <VersionGame>1.16.5</Version>
+        <!-- ... -->
+    </PropertyGroup>
+</Project>
 ```
 
 #### Mod Website

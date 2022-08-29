@@ -15,7 +15,6 @@
 * Explain the `<GameFilesPrefix>` tag in the [README File](README.md)
 
 ## Completed 2022-08-28
-### Next Commit
 * Explain the `<ProjectGUID>` tag in the [README File](README.md)
 * Explain the `<VersionModMajor>` tag in the [README File](README.md)
 * Explain the `<VersionModMinor>` tag in the [README File](README.md)
@@ -24,13 +23,14 @@
 * Explain the `<ModAuthors>` tag in the [README File](README.md)
 * Explain the `<ModDescription>` tag in the [README File](README.md)
 * Explain the `<ModType>` tag in the [README File](README.md)
+### Next Commit
+* Explain the `<VersionGame>` tag in the [README File](README.md)
+* Explain the `<VersionGameMinimum>` tag in the [README File](README.md)
 
 ## Doing
 * Create [README file](README.md) Manual
 * Explain all the variables in the [README file](README.md) file
-* Explain the `<VersionGame>` tag in the [README File](README.md)
 * Explain the `<ModDependencies>` tag in the [README File](README.md)
-* Explain the `<VersionGameMinimum>` tag in the [README File](README.md)
 
 ## Backlog
 * Explain the `<ModNameHuman>` tag in the [README File](README.md)
